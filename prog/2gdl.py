@@ -87,10 +87,17 @@ class HalfCarModelWindow(tk.Tk):
         damping_c2 = float(self.damping_c2_entry.get())
 
         wf = float(self.forced_freq_entry.get())
-        f  = np.fromstring(self.forced_amp_entry.get(), dtype=float, sep=' ').reshape(N,1)
-        B  = np.fromstring(self.B_entry.get(), dtype=float, sep=' ').reshape(N,N)
-        X0 = np.fromstring(self.X0_entry.get(), dtype=float, sep=' ').reshape(N,1)
-        V0 = np.fromstring(self.V0_entry.get(), dtype=float, sep=' ').reshape(N,1)
+
+        f = np.zeros((N,1))
+        B = np.zeros((N,N))
+        X0 = np.array([1, 0])
+        V0 = np.array([0, 1])
+
+        if wf != 0:
+            f  = np.fromstring(self.forced_amp_entry.get(), dtype=float, sep=' ').reshape(N,1)
+            B  = np.fromstring(self.B_entry.get(), dtype=float, sep=' ').reshape(N,N)
+            X0 = np.fromstring(self.X0_entry.get(), dtype=float, sep=' ').reshape(N,1)
+            V0 = np.fromstring(self.V0_entry.get(), dtype=float, sep=' ').reshape(N,1)
         
         M = np.array([[mass_m1, 0], [0, mass_m2]])
         K = np.array([[spring_k1 + spring_k2, -spring_k2], [-spring_k2, spring_k2]])
