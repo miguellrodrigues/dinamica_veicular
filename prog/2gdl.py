@@ -3,7 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sympy as sp
 import scienceplots
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from modal_analysis import modal_analysis, simulation, fft
 
 
