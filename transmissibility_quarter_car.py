@@ -13,7 +13,7 @@ plt.style.use([
 wn     = 2.86986454420447
 wn_hat = 8.6095936326134
 
-zeta = np.linspace(.1, 1, 4)
+zeta = np.arange(.1, .5, .1)
 
 s = ct.tf('s')
 
@@ -33,9 +33,6 @@ for z in zeta:
     ax[0].loglog(omega, mag, label=f'$\\zeta={z:.1f}$')
     ax[1].semilogx(omega, np.rad2deg(phase), label=f'$\\zeta={z:.1f}$')
 
-    # remove x label ax[0]
-    ax[0].set_xlabel('')
-    ax[0].set_xticklabels([])
     ax[0].set_ylabel('Magnitude (dB)')
 
     ax[1].set_xlabel('Frequency (rad/s)')
