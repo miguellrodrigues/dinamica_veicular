@@ -17,11 +17,8 @@ l_t = 1.2
 # # # # # # # # # # # # # # # # # # # # #
 wo = np.array([5.72, 7.153, 57.474, 57.491])
 
-w = np.array([5.72, 7.153, 57.474, 57.491]) * 2.5
+w = np.array([5.72, 7.153, 57.474, 57.491])
 W = np.diag(w) ** 2
-
-M2 = np.vectorize(lambda x: 1 / np.sqrt(x) if x != 0 else 0)(M)
-M_2 = np.vectorize(lambda x: np.sqrt(x) if x != 0 else 0)(M)
 
 kd = cvx.Variable()
 kt = cvx.Variable()
@@ -36,19 +33,17 @@ K = cvx.bmat([
     [-k_st, l_t * k_st, 0, k_st + kt]
 ])
 
-K_til = M2 @ K @ M2
+M_ = np.linalg.inv(M)
+K_til = M_@K
 
-constraints = [
-    kd >= 1,
-    kt >= 1,
-]
+constraints = []
 
 obj = cvx.Minimize(
-    cvx.norm(K_til - W)
+    cvx.norm2(K_til - W)
 )
 
 prob = cvx.Problem(obj, constraints)
-prob.solve(solver="MOSEK", verbose=False)
+prob.solve(solver="MOSEK", verbose=True)
 
 print(' ')
 print("status:", prob.status)
