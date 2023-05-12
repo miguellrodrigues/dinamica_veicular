@@ -6,16 +6,19 @@ np.set_printoptions(precision=3, suppress=True)
 l_d = 1.17
 l_t = 1.68
 
-w = np.array([5.72, 7.153, 57.474, 57.491])
+w = np.array([1.2, 1.6, 15.2, 15.8])*2*np.pi
 W = np.diag(w) ** 2
 
+md = 100
+mt = md
 mv = 1500
 jv = 2400
 
 
 def cost(x):
-    md, mt = x[0], x[1]
-    kd, kt, ksd, kst = x[2], x[3], x[4], x[5]
+    kd, ksd = x[0], x[1]
+    kt = kd
+    kst = ksd
 
     M = np.diag([mv, jv, md, mt])
 
@@ -30,14 +33,11 @@ def cost(x):
 
     K_til = M2 @ K @ M2
 
-    _, P = np.linalg.eig(K_til)
-    L = P.T @ K_til
-
-    return np.linalg.norm(L - W, 2)
+    return np.trace((K_til - W)**2)
 
 
-lower_bounds = [50, 50, 500, 500, 500, 500]
-upper_bounds = [200, 200, 1e6, 1e6, 1e6, 1e6]
+lower_bounds = [500, 500]
+upper_bounds = [1e6, 1e5]
 
 res = differential_evolution(
     cost,
@@ -48,7 +48,7 @@ res = differential_evolution(
     disp=True,
     polish=False,
     mutation=(0.5, 1),
-    recombination=0.7,
+    recombination=0.4,
     strategy='rand1bin',
     updating='deferred',
     init='sobol',
@@ -58,8 +58,9 @@ res = differential_evolution(
 
 x = res.x
 
-md, mt = x[0], x[1]
-kd, kt, ksd, kst = x[2], x[3], x[4], x[5]
+kd, ksd = x[0], x[1]
+kt = kd
+kst = ksd
 
 M = np.diag([mv, jv, md, mt])
 
@@ -78,5 +79,5 @@ wn, P = np.linalg.eig(K_til)
 print(' ')
 print(x)
 print(' ')
-print(wn ** .5)
+print((wn ** .5)/2/np.pi)
 print(' ')

@@ -11,23 +11,22 @@ m_t = 100
 
 M = np.diag([m_v, J_v, m_d, m_t])
 
-l_d = 1
-l_t = 1.2
+l_d  = 1.17
+l_t  = 1.68
 
 # # # # # # # # # # # # # # # # # # # # #
-wo = np.array([5.72, 7.153, 57.474, 57.491])
+wo = np.array([.91, 1.13, 9.15, 9.15])*2*np.pi
 
-w = np.array([5.72, 7.153, 57.474, 57.491]) * 2.5
+w = np.array([1.2, 1.6, 15.2, 15.8])*2*np.pi
 W = np.diag(w) ** 2
 
-M2 = np.vectorize(lambda x: 1 / np.sqrt(x) if x != 0 else 0)(M)
-M_2 = np.vectorize(lambda x: np.sqrt(x) if x != 0 else 0)(M)
+MI = np.vectorize(lambda x: 1 / x if x != 0 else 0)(M)
 
 kd = cvx.Variable()
-kt = cvx.Variable()
+kt = kd
 
 k_sd = cvx.Variable()
-k_st = cvx.Variable()
+k_st = k_sd
 
 K = cvx.bmat([
     [k_sd + k_st, l_d * k_sd - l_t * k_st, -k_sd, -k_st],
@@ -36,15 +35,18 @@ K = cvx.bmat([
     [-k_st, l_t * k_st, 0, k_st + kt]
 ])
 
-K_til = M2 @ K @ M2
+K_til = MI@K
 
 constraints = [
-    kd >= 1,
-    kt >= 1,
+    kd >= 0,
+    k_sd >= 0,
+
+    kd <= 1e6,
+    k_sd <= 1e5,
 ]
 
 obj = cvx.Minimize(
-    cvx.norm(K_til - W)
+    cvx.trace((K_til - W)**2)
 )
 
 prob = cvx.Problem(obj, constraints)
@@ -59,12 +61,12 @@ wn, P = np.linalg.eig(K_til)
 wn = np.sqrt(wn)
 
 print(' ')
-print(wo / (2 * np.pi))
+print(wo/2/np.pi)
 print(' ')
 print(kd.value)
 print(kt.value)
 print(k_sd.value)
 print(k_st.value)
 print(' ')
-print(wn / (2 * np.pi))
+print(wn/2/np.pi)
 print(' ')
