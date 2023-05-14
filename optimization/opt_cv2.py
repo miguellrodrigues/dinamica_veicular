@@ -33,14 +33,16 @@ K = cvx.bmat([
     [-k_st, l_t * k_st, 0, k_st + kt]
 ])
 
+
 M_ = np.linalg.inv(M)
 K_til = M_@K
 
-constraints = []
+constraints = [
+    cvx.diag(K_til) == w,
 
-obj = cvx.Minimize(
-    cvx.norm2(K_til - W)
-)
+]
+
+obj = cvx.Minimize(0)
 
 prob = cvx.Problem(obj, constraints)
 prob.solve(solver="MOSEK", verbose=True)

@@ -1,6 +1,7 @@
 import cvxpy as cvx
 import numpy as np
 from numpy import linalg
+import matplotlib.pyplot as plt
 
 np.set_printoptions(precision=3, suppress=True)
 
@@ -36,6 +37,7 @@ K = cvx.bmat([
 ])
 
 K_til = MI@K
+P = cvx.Variable((4, 4), PSD=True)
 
 constraints = [
     kd >= 0,
