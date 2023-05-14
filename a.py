@@ -45,6 +45,8 @@ Mmesh, Kmesh = np.meshgrid(M, K)
 
 omega = np.sqrt(Kmesh/Mmesh)
 
+# # 
+
 fig = plt.figure(figsize=(8, 6))
 ax = fig.add_subplot(111, projection='3d')
 ax.plot_surface(Mmesh/1000., Kmesh/1000., omega, cmap='viridis')
