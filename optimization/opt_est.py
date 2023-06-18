@@ -3,22 +3,24 @@ from scipy.optimize import differential_evolution
 
 np.set_printoptions(precision=3, suppress=True)
 
-l_d = 1.17
-l_t = 1.68
 
-w = np.array([1.2, 1.6, 15.2, 15.8])*2*np.pi
+w = np.array([1.4, 1.5, 16, 16])*2*np.pi
 W = np.diag(w) ** 2
-
-md = 100
-mt = md
-mv = 1500
-jv = 2400
 
 
 def cost(x):
     kd, ksd = x[0], x[1]
     kt = kd
     kst = ksd
+
+    l_d = x[2]
+    l_t = x[3]
+
+    md = x[4]
+    mt = md
+
+    mv = x[5]
+    jv = x[6]
 
     M = np.diag([mv, jv, md, mt])
 
@@ -33,23 +35,23 @@ def cost(x):
 
     K_til = M2 @ K @ M2
 
-    return np.trace((K_til - W)**2)
+    return np.linalg.norm((K_til - W),2)
 
 
-lower_bounds = [500, 500]
-upper_bounds = [1e6, 1e5]
+lower_bounds = [500, 500, .5, 1.25, 75, 500, 1500]
+upper_bounds = [500*1e3, 70*1e3,  1.5,  2, 150, 1500, 2500]
 
 res = differential_evolution(
     cost,
     bounds=list(zip(lower_bounds, upper_bounds)),
-    maxiter=10000,
-    popsize=100,
+    maxiter=1000,
+    popsize=70,
     tol=1e-7,
     disp=True,
     polish=False,
     mutation=(0.5, 1),
-    recombination=0.4,
-    strategy='rand1bin',
+    recombination=0.9,
+    strategy='best1bin',
     updating='deferred',
     init='sobol',
     workers=10,
@@ -61,6 +63,15 @@ x = res.x
 kd, ksd = x[0], x[1]
 kt = kd
 kst = ksd
+
+l_d = x[2]
+l_t = x[3]
+
+md = x[4]
+mt = md
+
+mv = x[5]
+jv = x[6]
 
 M = np.diag([mv, jv, md, mt])
 

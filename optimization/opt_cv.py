@@ -48,11 +48,11 @@ constraints = [
 ]
 
 obj = cvx.Minimize(
-    cvx.trace((K_til - W)**2)
+    (cvx.trace(K_til-W))**2
 )
 
 prob = cvx.Problem(obj, constraints)
-prob.solve(solver="MOSEK", verbose=False)
+prob.solve(solver="MOSEK", verbose=False, )
 
 print(' ')
 print("status:", prob.status)
